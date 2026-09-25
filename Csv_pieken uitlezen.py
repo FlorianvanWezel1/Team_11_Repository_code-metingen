@@ -3,7 +3,6 @@ import matplotlib.pyplot as plt
 from pathlib import Path
 from scipy.signal import find_peaks, savgol_filter, medfilt
 
-
 bestand = Path("Project/team_11_brekingsindex_bepalen/Newfile15.csv")
 
 # Minimale afstand tussen twee afzonderlijke franjes, in meetpunten.
@@ -13,10 +12,6 @@ distance = 10
 # Relatieve minimale prominence.
 # Start bijvoorbeeld met 0.05 tot 0.10.
 prominence_factor = 0.08
-
-# ============================================================
-# DATA INLEZEN
-# ============================================================
 
 parameters = pd.read_csv(bestand, nrows=1)
 
@@ -37,10 +32,7 @@ df["tijd_s"] = start + df["X"] * increment
 tijd = df["tijd_s"].to_numpy()
 spanning = df["CH1"].to_numpy()
 
-# ============================================================
 # SIGNAAL BEWERKEN
-# ============================================================
-
 # Verwijdert losse hoge of lage uitschieters.
 # Deze instelling blijft voor alle bestanden gelijk.
 spanning_schoon = medfilt(spanning, kernel_size=3)
@@ -62,9 +54,7 @@ gladde_spanning = savgol_filter(
     polyorder=2
 )
 
-# ============================================================
 # PIEKDETECTIE
-# ============================================================
 
 spanningsbereik = gladde_spanning.max() - gladde_spanning.min()
 prominence = prominence_factor * spanningsbereik
@@ -75,10 +65,7 @@ pieken, eigenschappen = find_peaks(
     distance=distance
 )
 
-# ============================================================
 # RESULTATEN
-# ============================================================
-
 dt = tijd[1] - tijd[0]
 samplefrequentie = 1 / dt
 minimale_afstand_ms = distance * dt * 1000
@@ -104,10 +91,8 @@ df_pieken = pd.DataFrame({
 uitvoer_csv = bestand.with_name(f"{bestand.stem}_pieken.csv")
 df_pieken.to_csv(uitvoer_csv, index=False)
 
-# ============================================================
-# GRAFIEK
-# ============================================================
 
+# GRAFIEK
 plt.figure(figsize=(14, 6))
 
 plt.plot(
